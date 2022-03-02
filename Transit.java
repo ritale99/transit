@@ -224,8 +224,40 @@ public class Transit {
 	 */
 	public TNode duplicate() {
 
-	    // UPDATE THIS METHOD
+		//lets check how many layers we have(in case of scooters)
+		TNode curr = trainZero;
+		int count = 0;
+		while(curr!=null){
+			count++;
+			curr = curr.getDown();
+		}
+
+
 	    return null;
+	}
+
+	private TNode findScooterNode(int destination){
+		TNode prev = null;
+		TNode curr = trainZero.getDown().getDown();
+		while(curr.getLocation() != destination){
+			prev = curr;
+			curr = curr.getNext();
+			if (curr ==null){
+				return prev;
+			}		
+		}
+		return curr;
+	}
+
+	private TNode findWalkNode(int destination){
+		TNode curr = trainZero.getDown().getDown().getDown();
+		TNode prev = null;
+		while(curr.getLocation() != destination){
+			prev = curr;			
+			curr = curr.getNext();
+			if(curr == null) return prev;
+		}
+		return curr;
 	}
 
 	/**
@@ -236,7 +268,45 @@ public class Transit {
 	 */
 	public void addScooter(int[] scooterStops) {
 
-	    // UPDATE THIS METHOD
+		//create a new node for the start of the scooters list
+		TNode startScooters = new TNode();
+
+		//it starts off with 0 just like the rest of methods of transport
+		startScooters.setLocation(0);
+
+		//need a pointer node
+		TNode curr = startScooters;
+
+		//set the down of the start of the scooters to the corresponding walk node
+		startScooters.setDown(trainZero.getDown().getDown());
+
+		//first set up the list for the scooters
+		for(int i = 0; i<scooterStops.length; i++){
+			TNode newNode = new TNode();
+			newNode.setLocation(scooterStops[i]);
+			
+			curr.setNext(newNode);
+			curr = curr.getNext();
+		}
+
+
+		//set the downs from the bus nodes
+		curr = trainZero.getDown();
+		curr.setDown(startScooters);
+		curr = curr.getNext();
+		while(curr != null){
+			curr.setDown(findScooterNode(curr.getLocation()));
+			curr = curr.getNext();
+		}
+		
+		//set the downs from the scooter nodes
+		curr = startScooters;
+		while(curr !=null){
+			curr.setDown(findWalkNode(curr.getLocation()));
+			curr = curr.getNext();
+		}
+
+
 	}
 
 	/**
