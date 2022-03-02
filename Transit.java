@@ -224,13 +224,7 @@ public class Transit {
 	 */
 	public TNode duplicate() {
 
-		//lets check how many layers we have(in case of scooters)
-		TNode curr = trainZero;
-		int count = 0;
-		while(curr!=null){
-			count++;
-			curr = curr.getDown();
-		}
+		
 
 
 	    return null;
